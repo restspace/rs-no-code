@@ -1,0 +1,13 @@
+{
+  "extends": "@tsconfig/svelte/tsconfig.json",
+
+  "include": [
+    "src/**/*",
+    "node_modules/@pyoner/svelte-form/src/**/*"
+   ],
+  "exclude": ["__sapper__/*", "public/*"],
+  "rootDir": "src",
+  "compilerOptions": {
+    "resolveJsonModule": true
+  }
+}

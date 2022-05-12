@@ -1,0 +1,122 @@
+[
+	{
+		"name": "Discord",
+		"type": "API Wrapper",
+		"logo": "discord-icon-colour.svg",
+		"description": "Discord is the main communication platform for DAOs and web3. It supports interactive chat communication in channels, and allows for customisation using bots. Discord component can trigger a pipeline when a message or command is received from Discord, provide information about Discord, or send messages into Discord",
+		"apis": [
+			{
+				"mode": "source",
+				"description": ">interaction"
+			}
+		],
+		"configSchema": {
+			"title": "Discord configuration",
+			"type": "object",
+			"properties": {
+				"applicationId": { "title": "Application id", "type": "string" },
+				"botToken": { "title": "Bot token", "type": "string" },
+				"publicKey": { "title": "Public key", "type": "string" },
+				"guildIds": { "title": "Guild ids", "type": "array", "items": { "title": "Guild Id", "type": "string" } }
+			},
+			"required": [ "applicationId", "botToken", "publicKey" ]
+		}
+	},
+	{
+		"name": "Notion",
+		"type": "API Wrapper",
+		"logo": "notion.svg",
+		"description": "Notion is a multifunctional documentation platform",
+		"apis": [],
+		"configSchema": {}
+	},
+	{
+		"name": "Sobol",
+		"type": "API Wrapper",
+		"logo": "sobol.png",
+		"description": "Sobol is an organisation structure too designed for DAOs and flat organisations.",
+		"apis": [
+			{
+				"mode": "process",
+				"description": "List users"
+			},
+			{
+				"mode": "process",
+				"description": "Write user"
+			},
+			{
+				"mode": "process",
+				"description": "Read user"
+			},
+			{
+				"mode": "process",
+				"description": "Delete user"
+			},
+			{
+				"mode": "process",
+				"description": "Get user by email"
+			},
+			{
+				"mode": "process",
+				"description": "Invite user"
+			},
+			{
+				"mode": "process",
+				"description": "List teams"
+			},
+			{
+				"mode": "process",
+				"description": "Write team"
+			},
+			{
+				"mode": "process",
+				"description": "Read team"
+			},
+			{
+				"mode": "process",
+				"description": "Delete team"
+			}
+		],
+		"configSchema": {
+			"title": "Sobol configuration",
+			"type": "object",
+			"properties": {
+				"apiKey": { "title": "API key", "type": "string" },
+				"organisationId": { "title": "Organisation id", "type": "string" }
+			},
+			"required": [ "apiKey", "organisationId" ]
+		}
+	},
+	{
+		"name": "Data",
+		"type": "Infrastructure Adapter",
+		"logo": "store.svg",
+		"description": "Data is a wrapper around a key/value store where each url path maps to a JSON object. The data is typed using JSON Schema",
+		"apis": [],
+		"configSchema": {}
+	},
+	{
+		"name": "Query",
+		"type": "Infrastructure Adapter",
+		"logo": "query.svg",
+		"description": "Query is a wrapper around any queryable data store. You can store multiple queries in the component and chose to run any of these queries when the component is activated.",
+		"apis": [],
+		"configSchema": {}
+	},
+	{
+		"name": "Template",
+		"type": "Processor",
+		"logo": "template.svg",
+		"description": "Template is a processor. You can store multiple templates in the component and chose to use any of these to process the input data when the component is activated.",
+		"apis": [],
+		"configSchema": {}
+	},
+	{
+		"name": "Timer",
+		"type": "Trigger",
+		"logo": "clock.svg",
+		"description": "Timer triggers a pipeline at a fixed interval of time.",
+		"apis": [],
+		"configSchema": {}
+	}
+]
