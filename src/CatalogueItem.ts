@@ -1,6 +1,7 @@
 export type ComponentMode = "source" | "target" | "process" | "transform" | "terminal";
 export interface ApiSpec {
 	mode: ComponentMode;
+	title: string;
 	description: string;
 }
 export interface CatalogueItem {

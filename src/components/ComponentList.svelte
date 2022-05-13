@@ -46,6 +46,7 @@
 		description: "",
 		apis: [{
 			"mode": "transform",
+			"title": "",
 			"description": ""
 		}],
 		configuration: {}
@@ -57,6 +58,7 @@
 		description: "",
 		apis: [{
 			"mode": "terminal",
+			"title": "",
 			"description": ""
 		}],
 		configuration: {}
@@ -75,6 +77,7 @@
 				<span>Services</span>
 			</div>
 			{#each $components as component, idx (component)}
+				{#if component.type !== "Http"}
 				<div class="drag-drawflow {componentClass(idx)}" draggable={configured(idx)}
 					on:click={editConfig(idx)}
 					on:dragstart={drag(component)}
@@ -82,6 +85,24 @@
 					<div class="service-logo" style="background-image: url(/img/{component.logo});"></div>
 					<span>{component.name}{configured(idx) ? "" : "..."}</span>
 				</div>
+				{/if}
+			{/each}
+		</div>
+		<div class="paths">
+			<div class="service-heading">
+				<div class="service-logo" style="background-image: url(/img/http-white.svg);"></div>
+				<span>Url paths</span>
+			</div>
+			{#each $components as component, idx (component)}
+				{#if component.type === "Http"}
+				<div class="drag-drawflow {componentClass(idx)}" draggable={configured(idx)}
+					on:click={editConfig(idx)}
+					on:dragstart={drag(component)}
+					on:touchstart={drag(component)} on:touchmove={dragMove} on:touchend={drop}>
+					<div class="service-logo" style="background-image: url(/img/{component.logo});"></div>
+					<span>{component.configuration?.basePath || component.name}{configured(idx) ? "" : "..."}</span>
+				</div>
+				{/if}
 			{/each}
 		</div>
 		<div class="generic">

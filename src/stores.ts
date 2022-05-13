@@ -1,9 +1,9 @@
 import { Writable, writable } from "svelte/store";
-import type { ApiSpec, CatalogueItem, ConfiguredComponent } from "./CatalogueItem";
+import type { ApiSpec, ConfiguredComponent } from "./CatalogueItem";
 import type { NodeSpec } from "./NodeSpec";
 
 export interface DragDrop {
-	itemSelect: CatalogueItem | null;
+	itemSelect: ConfiguredComponent | null;
 	lastMove: any;
 }
 

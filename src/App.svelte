@@ -6,7 +6,7 @@
 	import catalogueJson from "./catalogue.json";
 	import { dragDrop, showForm, nodeData, currentNodeId, showApis, suspendedAddNodeToDrawFlow } from "./stores";
 	import ComponentList from './components/ComponentList.svelte';
-	import type { ApiSpec, CatalogueItem } from './CatalogueItem';
+	import type { ApiSpec, CatalogueItem, ConfiguredComponent } from './CatalogueItem';
 	import ApiList from './components/ApiList.svelte';
 
 	let editor: Drawflow;
@@ -94,13 +94,13 @@
 		} else {
 			ev.preventDefault();
 			const dataJson = ev.dataTransfer.getData("node");
-			const data = JSON.parse(dataJson) as CatalogueItem;
+			const data = JSON.parse(dataJson) as ConfiguredComponent;
 			createNode(data, ev.clientX, ev.clientY);
 			console.log('not touchend');
 		}
     }
 
-	function createNode(data: CatalogueItem, x: number, y: number) {
+	function createNode(data: ConfiguredComponent, x: number, y: number) {
 		creatingCatalogueItem = data;
 		if (data.apis.length < 2) {
 			addNodeToDrawFlow(data, x, y, data.apis?.[0]);
@@ -110,7 +110,7 @@
 		}
 	}
 
-    function addNodeToDrawFlow(itemSelect: CatalogueItem, pos_x, pos_y, apiSpec: ApiSpec) {
+    function addNodeToDrawFlow(itemSelect: ConfiguredComponent, pos_x, pos_y, apiSpec: ApiSpec) {
 		if (editor.editor_mode === 'fixed') {
 			return false;
 		}
@@ -119,9 +119,10 @@
 		pos_y = pos_y * ( editor['precanvas'].clientHeight / (editor['precanvas'].clientHeight * editor.zoom)) - (editor['precanvas'].getBoundingClientRect().y * ( editor['precanvas'].clientHeight / (editor['precanvas'].clientHeight * editor.zoom)));
 
 		const iconHtml = `<img class="logo" src="/img/${itemSelect.logo}"/>`;
+		const title = apiSpec.title.startsWith(":") ? itemSelect.configuration[apiSpec.title.substring(1)] : apiSpec.title;
 		let html = `
 			<div class="node-title">${itemSelect.name}</div>
-			<div class="node-api">${apiSpec.description}</div>
+			<div class="node-api">${title}</div>
 		`;
 		if (![ "terminal", "transform" ].includes(apiSpec.mode)) html = iconHtml + html;
 		const nInputs = apiSpec.mode === "source" ? 0 : 1;

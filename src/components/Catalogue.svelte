@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CatalogueItem, ConfiguredComponent } from "../CatalogueItem";
-	import { components, showCatalogue } from "../stores";
+	import { components, configIdx, showCatalogue, showForm } from "../stores";
 
 	export let catalogue: CatalogueItem[];
 
@@ -11,6 +11,13 @@
 		}
 		components.update(val => [ ...val, configuredComponent ]);
 		$showCatalogue = false;
+		$configIdx = $components.length - 1;
+		$showForm = true;
+		// set focus to first input on form
+		setTimeout(() => {
+			const firstFormEl = document.querySelector(".form-col input, .form-col select, .form-col textarea");
+			(firstFormEl as HTMLElement)?.focus();
+		}, 100);
 	};
 </script>
 
@@ -81,5 +88,6 @@
 		top: 0;
 		left: 0;
 		display: none;
+		z-index: 20;
 	}
 </style>

@@ -1,5 +1,29 @@
 [
 	{
+		"name": "Url",
+		"type": "Http",
+		"logo": "http.svg",
+		"description": "A web request",
+		"apis": [
+			{
+				"mode": "source",
+				"title": ":basePath",
+				"description": ""
+			}
+		],
+		"configSchema": {
+			"title": "Web request configuration",
+			"type": "object",
+			"properties": {
+				"basePath": { "title": "Base path", "type": "string" },
+				"readRoles": { "title": "Read roles", "type": "string" },
+				"writeRoles": { "title": "Write roles", "type": "string" },
+				"createRoles": { "title": "Create roles", "type": "string" }
+			},
+			"required": [ "basePath", "readRoles", "writeRoles" ]
+		}
+	},
+	{
 		"name": "Discord",
 		"type": "API Wrapper",
 		"logo": "discord-icon-colour.svg",
@@ -7,7 +31,8 @@
 		"apis": [
 			{
 				"mode": "source",
-				"description": ">interaction"
+				"title": "Interaction",
+				"description": "A user took some action within the Discord application"
 			}
 		],
 		"configSchema": {
@@ -27,7 +52,48 @@
 		"type": "API Wrapper",
 		"logo": "notion.svg",
 		"description": "Notion is a multifunctional documentation platform",
-		"apis": [],
+		"apis": [
+			{
+				"mode": "process",
+				"title": "Retrieve page",
+				"description": "Get a specific page by id"
+			},
+			{
+				"mode": "process",
+				"title": "Create page",
+				"description": "Create a page as a child of another page"
+			},
+			{
+				"mode": "process",
+				"title": "Update page",
+				"description": "Update an existing page by id"
+			},
+			{
+				"mode": "process",
+				"title": "Retrieve block",
+				"description": "Retrieve a block by id"
+			},
+			{
+				"mode": "process",
+				"title": "Update block",
+				"description": "Update a block by id"
+			},
+			{
+				"mode": "process",
+				"title": "Retrieve block children",
+				"description": "Retrieve the children of a block by id"
+			},
+			{
+				"mode": "process",
+				"title": "Append block children",
+				"description": "Append children to a block by the block's id"
+			},
+			{
+				"mode": "process",
+				"title": "Delete a block",
+				"description": "Delete a block by id"
+			}
+		],
 		"configSchema": {}
 	},
 	{
@@ -38,43 +104,53 @@
 		"apis": [
 			{
 				"mode": "process",
-				"description": "List users"
+				"title": "List users",
+				"description": "Get a list of all the users in an organisation"
 			},
 			{
 				"mode": "process",
-				"description": "Write user"
+				"title": "Write user",
+				"description": "Create or update a user's record"
 			},
 			{
 				"mode": "process",
-				"description": "Read user"
+				"title": "Read user",
+				"description": "Read the information for a specific user"
 			},
 			{
 				"mode": "process",
-				"description": "Delete user"
+				"title": "Delete user",
+				"description": "Delete a specific user"
 			},
 			{
 				"mode": "process",
-				"description": "Get user by email"
+				"title": "Get user by email",
+				"description": "Find a user by their email address"
 			},
 			{
 				"mode": "process",
-				"description": "Invite user"
+				"title": "Invite user",
+				"description": "Invite a user to enter their data into Sobol"
 			},
 			{
 				"mode": "process",
-				"description": "List teams"
+				"title": "List teams",
+				"description": "Get a list of all the teams in an organisation"
 			},
 			{
 				"mode": "process",
-				"description": "Write team"
+				"title": "Write team",
+				"description": "Create or update a team's record"
 			},
 			{
 				"mode": "process",
-				"description": "Read team"
+				"title": "Read team",
+				"description": "Read the information for a specific team"
 			},
 			{
 				"mode": "process",
-				"description": "Delete team"
+				"title": "Delete team",
+				"description": "Delete the record for a specific team"
 			}
 		],
 		"configSchema": {
@@ -108,7 +184,42 @@
 		"type": "Processor",
 		"logo": "template.svg",
 		"description": "Template is a processor. You can store multiple templates in the component and chose to use any of these to process the input data when the component is activated.",
-		"apis": [],
+		"apis": [
+			{
+				"mode": "process",
+				"title": "Transaction notification",
+				"description": "Email to notify a user about a payment made to them"
+			},
+			{
+				"mode": "process",
+				"title": "Proposal created",
+				"description": "Email to notify a user about a proposal that has been created"
+			}
+		],
+		"configSchema": {}
+	},
+	{
+		"name": "Latest",
+		"type": "Processor",
+		"logo": "latest.svg",
+		"description": "The Latest service processes a JSON list and returns only the items it has never returned before i.e. the latest items",
+		"apis": [
+			{
+				"mode": "process",
+				"title": "By index",
+				"description": "Returns latest items by storing length of last list processed"
+			},
+			{
+				"mode": "process",
+				"title": "By timestamp",
+				"description": "Returns latest items by storing most recent timestamp of last list processed"
+			},
+			{
+				"mode": "process",
+				"title": "By identifier",
+				"description": "Returns latest items by storing identifer of last item in last list processed"
+			}
+		],
 		"configSchema": {}
 	},
 	{
@@ -116,7 +227,80 @@
 		"type": "Trigger",
 		"logo": "clock.svg",
 		"description": "Timer triggers a pipeline at a fixed interval of time.",
+		"apis": [
+			{
+				"mode": "source",
+				"title": "Trigger",
+				"description": "Timer trigger"
+			}
+		],
+		"configSchema": {
+			"title": "Timer configuration",
+			"type": "object",
+			"properties": {
+				"period": { "title": "Period", "type": "string", "enum": [ "Month", "Week", "Day", "Hour", "Minute" ] },
+				"count": { "title": "Number of Periods", "type": "number" }
+			},
+			"required": [ "period", "count" ]
+		}
+	},
+	{
+		"name": "Smart Contract",
+		"type": "Trigger",
+		"logo": "contract.svg",
+		"description": "Manages arbitrary smart contracts and their events.",
 		"apis": [],
+		"configSchema": {}
+	},
+	{
+		"name": "Email",
+		"type": "Infrastructure Adapter",
+		"logo": "email.svg",
+		"description": "Email sends email to an email service.",
+		"apis": [
+			{
+				"mode": "process",
+				"title": "Send email",
+				"description": "Send an email to a user"
+			}
+		],
+		"configSchema": {}
+	},
+	{
+		"name": "EPNS",
+		"type": "API Wrapper",
+		"logo": "epns.png",
+		"description": "EPNS provides a system for receiving notifications from on-chain events.",
+		"apis": [],
+		"configSchema": {}
+	},
+	{
+		"name": "Gnosis Safe",
+		"type": "API Wrapper",
+		"logo": "gnosis-safe.png",
+		"description": "Gnosis Safe is a multi-signatory wallet plus management tools.",
+		"apis": [
+			{
+				"mode": "source",
+				"title": "Safe multi-sig signature",
+				"description": "A multi-signatory transaction was signed by a signatory within Gnosis Safe"
+			},
+			{
+				"mode": "source",
+				"title": "Safe multi-sig transaction",
+				"description": "A multi-signatory transaction was completed within Gnosis Safe"
+			},
+			{
+				"mode": "source",
+				"title": "Safe setup",
+				"description": "A multi-signatory Gnosis Safe was set up"
+			},
+			{
+				"mode": "process",
+				"title": "Create multi-sig transaction",
+				"description": "Initiate a new multi-signatory transaction"
+			}
+		],
 		"configSchema": {}
 	}
 ]

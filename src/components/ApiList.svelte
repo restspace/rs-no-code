@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { showApis, suspendedAddNodeToDrawFlow } from "../stores";
-	import type { ApiSpec, CatalogueItem } from "../CatalogueItem";
+	import type { ApiSpec, CatalogueItem, ComponentMode } from "../CatalogueItem";
 
 	export let creatingCatalogueItem: CatalogueItem | null;
 
@@ -14,6 +14,14 @@
 
 	let apis: ApiSpec[];
 	$: apis = creatingCatalogueItem?.apis || [];
+
+	const apiMode = (mode: ComponentMode) => {
+		switch (mode) {
+			case "source": return "Trigger: ";
+			case "process": return "Action: ";
+			default: return "";
+		}
+	}
 </script>
 
 <div class="overlay" on:click={() => $showApis = false} style="display: {$showApis ? 'block' : 'none'}"></div>
@@ -21,8 +29,9 @@
 	<h2>Choose an API function</h2>
 	<div class="api-list">
 		{#each apis as api}
-			<div class="panel">
-				<h3 on:click={chooseApi(api)}>{api.description}</h3>
+			<div class="panel" on:click={chooseApi(api)}>
+				<h3>{apiMode(api.mode)}{api.title}</h3>
+				<p>{api.description}</p>
 			</div>
 		{/each}
 	</div>
@@ -50,9 +59,24 @@
 		top: 0;
 		left: 0;
 		display: none;
+		z-index: 20;
 	}
 
-	h3 {
+	.panel {
 		cursor: pointer;
+		background-color: #eee;
+		padding: 1em 1em 0.5em 1em;
+    	margin-bottom: 0.5em;
+	}
+	.panel:hover {
+		background-color: #ccc;
+	}
+	.panel h3 {
+		margin: 0 0 1em 0;
+		font-size: 1em;
+	}
+	.panel p {
+		margin: 0 0 0.5em 0;
+		font-size: 0.8em;
 	}
 </style>

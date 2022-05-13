@@ -24,6 +24,7 @@
 
 	input {
 		padding: 2px 4px;
+		border: 1px solid #808080;
 	}
 
 	/* Editing Drawflow */
@@ -47,7 +48,7 @@
 		padding: 7.5px 0;
 		background-image: url(/img/hexagon.svg);
 		background-repeat: no-repeat;
-		background-size: 100% 100%;
+		background-size: 99% 99%;
 	}
 	.drawflow .drawflow-node.source-container.selected {
 		background-image: url(/img/hexagon.svg);
@@ -107,6 +108,8 @@
 
 	.drawflow .drawflow-node .node-api {
 		font-size: 0.8em;
+		width: 100px;
+    	margin: 0 auto;
 	}
 
 	.drawflow .drawflow-node .input, .drawflow .drawflow-node .output {
@@ -137,11 +140,11 @@
 	}
 
 	.drawflow-delete {
-	border: 2px solid #4ea9ff;
-	background: white;
-	color: #4ea9ff;
-	-webkit-box-shadow: 0 2px 20px 2px #4ea9ff;
-	box-shadow: 0 2px 20px 2px #4ea9ff;
+		border: 1px solid #808080;
+		background: white;
+		color: #808080;
+		font-size: 1.3em;
+		line-height: 27px;
 	}
 
 	.drawflow-node .title-box {
