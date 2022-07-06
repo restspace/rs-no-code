@@ -1,0 +1,295 @@
+{
+  "/admin": {
+    "name": "Admin",
+    "source": "./services/static-site.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/admin",
+    "apis": [
+      "store",
+      "file.base"
+    ]
+  },
+  "/files": {
+    "name": "Files",
+    "source": "./services/file.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/files",
+    "apis": [
+      "store",
+      "file.base"
+    ]
+  },
+  "/data": {
+    "basePath": "/data",
+    "name": "Data",
+    "source": "./services/data.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "apis": [
+      "store",
+      "data.base"
+    ]
+  },
+  "/data/ds": {
+    "name": "Dataset",
+    "source": "./services/dataset.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "datasetName": "ds",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      },
+      "pathPattern": "${name}"
+    },
+    "basePath": "/data/ds",
+    "apis": [
+      "store",
+      "data.set"
+    ]
+  },
+  "/auth": {
+    "name": "Auth",
+    "source": "./services/auth.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/auth",
+    "apis": [
+      "auth"
+    ]
+  },
+  "/user": {
+    "name": "User",
+    "source": "./services/user-data.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/user",
+    "apis": [
+      "store",
+      "data.set"
+    ]
+  },
+  "/user-bypass": {
+    "name": "User bypass",
+    "source": "./services/dataset.rsm.json",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "datasetName": "user",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "token": {
+          "type": "string"
+        },
+        "tokenExpiry": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        },
+        "roles": {
+          "type": "string"
+        },
+        "password": {
+          "type": "password"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "pathPattern": "${email}"
+    },
+    "basePath": "/user-bypass",
+    "apis": [
+      "store",
+      "data.set"
+    ]
+  },
+  "/data/ds-auth": {
+    "name": "Dataset with Auth",
+    "source": "./services/dataset.rsm.json",
+    "access": {
+      "readRoles": "U",
+      "writeRoles": "E"
+    },
+    "datasetName": "ds",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        }
+      }
+    },
+    "basePath": "/data/ds-auth",
+    "apis": [
+      "store",
+      "data.set"
+    ]
+  },
+  "/templates": {
+    "source": "./services/template.rsm.json",
+    "adapterSource": "./adapter/NunjucksTemplateAdapter.ram.json",
+    "name": "Templates",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "E"
+    },
+    "basePath": "/templates",
+    "apis": [
+      "store-transform"
+    ]
+  },
+  "/test-abc": {
+    "source": "./services/pipeline.rsm.json",
+    "name": "Abc test",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/test-abc",
+    "apis": [
+      "transform",
+      "pipeline"
+    ]
+  },
+  "/pdf": {
+    "source": "./services/proxy.rsm.json",
+    "name": "PDF Gen",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/pdf",
+    "apis": [
+      "proxy"
+    ]
+  },
+  "/email": {
+    "source": "./services/email.rsm.json",
+    "name": "Email",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/email",
+    "apis": [
+      "email"
+    ]
+  },
+  "/s3-store": {
+    "source": "./services/dataset.rsm.json",
+    "name": "S3 Store",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "adapterSource": "./adapter/S3FileAdapter.ram.json",
+    "datasetName": "my-data",
+    "schema": {
+      "type": "object",
+      "properties": {
+        "abc": {
+          "type": "string"
+        }
+      },
+      "pathPattern": "${abc}"
+    },
+    "basePath": "/s3-store",
+    "apis": [
+      "store",
+      "data.set"
+    ]
+  },
+  "/s3-file": {
+    "source": "./services/file.rsm.json",
+    "name": "S3 Files",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "adapterSource": "./adapter/S3FileAdapter.ram.json",
+    "basePath": "/s3-file",
+    "apis": [
+      "store",
+      "file.base"
+    ]
+  },
+  "/discord": {
+    "source": "./services/discord.rsm.json",
+    "name": "Discord",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/discord",
+    "apis": [
+      "store"
+    ]
+  },
+  "/": {
+    "source": "./services/pipeline.rsm.json",
+    "name": "Site",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "all"
+    },
+    "basePath": "/",
+    "apis": [
+      "transform",
+      "pipeline"
+    ]
+  },
+  "/pipelines": {
+    "source": "./services/pipeline-store.rsm.json",
+    "name": "Pipelines",
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "E"
+    },
+    "basePath": "/pipelines",
+    "apis": [
+      "store-transform"
+    ]
+  },
+  "/.well-known/restspace": {
+    "access": {
+      "readRoles": "all",
+      "writeRoles": "A"
+    },
+    "name": "Services Service",
+    "source": "./services/services.rsm.json",
+    "basePath": "/.well-known/restspace",
+    "apis": [
+      "services"
+    ]
+  }
+}
+

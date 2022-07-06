@@ -4,7 +4,7 @@
 		"type": "Http",
 		"logo": "http.svg",
 		"description": "A web request",
-		"apis": [
+		"connects": [
 			{
 				"mode": "source",
 				"title": ":basePath",
@@ -28,11 +28,21 @@
 		"type": "API Wrapper",
 		"logo": "discord-icon-colour.svg",
 		"description": "Discord is the main communication platform for DAOs and web3. It supports interactive chat communication in channels, and allows for customisation using bots. Discord component can trigger a pipeline when a message or command is received from Discord, provide information about Discord, or send messages into Discord",
-		"apis": [
+		"connects": [
 			{
 				"mode": "source",
 				"title": "Interaction",
 				"description": "A user took some action within the Discord application"
+			},
+			{
+				"mode": "process",
+				"title": "Guild channels",
+				"description": "Read all the channels in a Guild"
+			},
+			{
+				"mode": "process",
+				"title": "Channel users",
+				"description": "Get all the users in a channel"
 			}
 		],
 		"configSchema": {
@@ -52,7 +62,7 @@
 		"type": "API Wrapper",
 		"logo": "notion.svg",
 		"description": "Notion is a multifunctional documentation platform",
-		"apis": [
+		"connects": [
 			{
 				"mode": "process",
 				"title": "Retrieve page",
@@ -101,7 +111,7 @@
 		"type": "API Wrapper",
 		"logo": "sobol.png",
 		"description": "Sobol is an organisation structure too designed for DAOs and flat organisations.",
-		"apis": [
+		"connects": [
 			{
 				"mode": "process",
 				"title": "List users",
@@ -168,7 +178,28 @@
 		"type": "Infrastructure Adapter",
 		"logo": "store.svg",
 		"description": "Data is a wrapper around a key/value store where each url path maps to a JSON object. The data is typed using JSON Schema",
-		"apis": [],
+		"connects": [
+			{
+				"mode": "process",
+				"title": "Read data",
+				"description": "Read a data value"
+			},
+			{
+				"mode": "process",
+				"title": "Write data",
+				"description": "Write a data value"
+			},
+			{
+				"mode": "process",
+				"title": "Delete data",
+				"description": "Delete a data value"
+			},
+			{
+				"mode": "process",
+				"title": "List all data",
+				"description": "List all the data values"
+			}
+		],
 		"configSchema": {}
 	},
 	{
@@ -176,7 +207,7 @@
 		"type": "Infrastructure Adapter",
 		"logo": "query.svg",
 		"description": "Query is a wrapper around any queryable data store. You can store multiple queries in the component and chose to run any of these queries when the component is activated.",
-		"apis": [],
+		"connects": [],
 		"configSchema": {}
 	},
 	{
@@ -184,7 +215,7 @@
 		"type": "Processor",
 		"logo": "template.svg",
 		"description": "Template is a processor. You can store multiple templates in the component and chose to use any of these to process the input data when the component is activated.",
-		"apis": [
+		"connects": [
 			{
 				"mode": "process",
 				"title": "Transaction notification",
@@ -194,6 +225,16 @@
 				"mode": "process",
 				"title": "Proposal created",
 				"description": "Email to notify a user about a proposal that has been created"
+			},
+			{
+				"mode": "process",
+				"title": "Sobol data for Discord",
+				"description": "Process Sobol user data to display as a message in Discord"
+			},
+			{
+				"mode": "process",
+				"title": "Bounty page",
+				"description": "Layout for the full bounty page in Notion"
 			}
 		],
 		"configSchema": {}
@@ -203,7 +244,7 @@
 		"type": "Processor",
 		"logo": "latest.svg",
 		"description": "The Latest service processes a JSON list and returns only the items it has never returned before i.e. the latest items",
-		"apis": [
+		"connects": [
 			{
 				"mode": "process",
 				"title": "By index",
@@ -227,7 +268,7 @@
 		"type": "Trigger",
 		"logo": "clock.svg",
 		"description": "Timer triggers a pipeline at a fixed interval of time.",
-		"apis": [
+		"connects": [
 			{
 				"mode": "source",
 				"title": "Trigger",
@@ -249,7 +290,7 @@
 		"type": "Trigger",
 		"logo": "contract.svg",
 		"description": "Manages arbitrary smart contracts and their events.",
-		"apis": [],
+		"connects": [],
 		"configSchema": {}
 	},
 	{
@@ -257,7 +298,7 @@
 		"type": "Infrastructure Adapter",
 		"logo": "email.svg",
 		"description": "Email sends email to an email service.",
-		"apis": [
+		"connects": [
 			{
 				"mode": "process",
 				"title": "Send email",
@@ -271,7 +312,7 @@
 		"type": "API Wrapper",
 		"logo": "epns.png",
 		"description": "EPNS provides a system for receiving notifications from on-chain events.",
-		"apis": [],
+		"connects": [],
 		"configSchema": {}
 	},
 	{
@@ -279,7 +320,7 @@
 		"type": "API Wrapper",
 		"logo": "gnosis-safe.png",
 		"description": "Gnosis Safe is a multi-signatory wallet plus management tools.",
-		"apis": [
+		"connects": [
 			{
 				"mode": "source",
 				"title": "Safe multi-sig signature",

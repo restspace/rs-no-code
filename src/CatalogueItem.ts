@@ -1,5 +1,5 @@
 export type ComponentMode = "source" | "target" | "process" | "transform" | "terminal";
-export interface ApiSpec {
+export interface ConnectSpec {
 	mode: ComponentMode;
 	title: string;
 	description: string;
@@ -9,7 +9,7 @@ export interface CatalogueItem {
 	type: string;
 	logo: string;
 	description: string;
-	apis: ApiSpec[];
+	apis: ConnectSpec[];
 	configSchema?: any;
 }
 export interface ConfiguredComponent extends CatalogueItem {

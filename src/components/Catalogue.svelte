@@ -1,11 +1,12 @@
 <script lang="ts">
-	import type { CatalogueItem, ConfiguredComponent } from "../CatalogueItem";
+	import type { ConfiguredComponent } from "../CatalogueItem";
+import type { ServiceManifestLocal } from "../data/types";
 	import { components, configIdx, showCatalogue, showForm } from "../stores";
 
-	export let catalogue: CatalogueItem[];
+	export let catalogue: ServiceManifestLocal[];
 
-	const chooseComponent = (component: CatalogueItem) => () => {
-		const configuredComponent = component as ConfiguredComponent;
+	const chooseComponent = (component: ServiceManifestLocal) => () => {
+		const configuredComponent = component as ServiceManifestLocal;
 		if (!configuredComponent.configSchema || Object.keys(configuredComponent.configSchema).length === 0) {
 			configuredComponent.configuration = {};
 		}
@@ -27,8 +28,7 @@
 	<div class="catalogue">
 		{#each catalogue as item}
 			<div on:click={chooseComponent(item)} class="panel">
-				<h3>{item.name}<img alt="{item.name} logo" class="logo" src="/img/{item.logo}"/></h3>
-				<h4>{item.type}</h4>
+				<h3>{item.name}{#if item.logo}<img alt="{item.name} logo" class="logo" src="/img/{item.logo}"/>{/if}</h3>
 				<p>{item.description}</p>
 			</div>
 		{/each}

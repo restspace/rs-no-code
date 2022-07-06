@@ -1,0 +1,793 @@
+{
+  "baseSchema": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string"
+      },
+      "source": {
+        "type": "string",
+        "description": "Url from which to request source code",
+        "enum": [
+          "./services/services.rsm.json",
+          "./services/auth.rsm.json",
+          "./services/data.rsm.json",
+          "./services/dataset.rsm.json",
+          "./services/file.rsm.json",
+          "./services/lib.rsm.json",
+          "./services/pipeline.rsm.json",
+          "./services/pipeline-store.rsm.json",
+          "./services/static-site-filter.rsm.json",
+          "./services/static-site.rsm.json",
+          "./services/user-data.rsm.json",
+          "./services/user-filter.rsm.json",
+          "./services/template.rsm.json",
+          "./services/proxy.rsm.json",
+          "./services/email.rsm.json",
+          "./services/account.rsm.json",
+          "./services/discord.rsm.json"
+        ]
+      },
+      "basePath": {
+        "type": "string",
+        "description": "Base path prefixing all paths used by the service"
+      },
+      "access": {
+        "type": "object",
+        "properties": {
+          "readRoles": {
+            "type": "string"
+          },
+          "writeRoles": {
+            "type": "string"
+          },
+          "manageRoles": {
+            "type": "string"
+          },
+          "createRoles": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "readRoles",
+          "writeRoles"
+        ]
+      },
+      "caching": {
+        "type": "object",
+        "properties": {
+          "cache": {
+            "type": "boolean"
+          },
+          "sendETag": {
+            "type": "boolean"
+          },
+          "maxAge": {
+            "type": "number"
+          }
+        }
+      },
+      "adapterSource": {
+        "type": "string",
+        "description": "Url from which to request adapter manifest"
+      },
+      "infraName": {
+        "type": "string",
+        "description": "Infrastructure adapter to use instead of an adapter source"
+      },
+      "adapterConfig": {
+        "type": "object",
+        "description": "Configuration for the adapter",
+        "properties": {}
+      }
+    },
+    "required": [
+      "name",
+      "source",
+      "basePath",
+      "access"
+    ]
+  },
+  "catalogue": {
+    "services": {
+      "Services Service": {
+        "name": "Services Service",
+        "description": "Provides discovery of configured services and service catalogue",
+        "moduleUrl": "./services/services.ts",
+        "apis": [
+          "services"
+        ],
+        "source": "./services/services.rsm.json"
+      },
+      "Authentication Service": {
+        "name": "Authentication Service",
+        "description": "Provides simple JWT authentication",
+        "moduleUrl": "./services/auth.ts",
+        "apis": [
+          "auth"
+        ],
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "userUrlPattern": {
+              "type": "string",
+              "description": "Url pattern to fetch user data"
+            },
+            "loginPage": {
+              "type": "string",
+              "description": "Login page url for redirect management"
+            }
+          },
+          "required": [
+            "userUrlPattern"
+          ]
+        },
+        "source": "./services/auth.rsm.json"
+      },
+      "Data Service": {
+        "name": "Data Service",
+        "description": "Reads and writes data from urls with the pattern datasource/key",
+        "moduleUrl": "./services/data.ts",
+        "apis": [
+          "store",
+          "data.base"
+        ],
+        "adapterInterface": "IDataAdapter",
+        "defaults": {
+          "basePath": "/data",
+          "xyz": "abc"
+        },
+        "source": "./services/data.rsm.json"
+      },
+      "Dataset Service": {
+        "name": "Dataset Service",
+        "description": "Reads and writes data with configured schema from urls by key",
+        "moduleUrl": "./services/dataset.ts",
+        "apis": [
+          "store",
+          "data.set"
+        ],
+        "adapterInterface": "IDataAdapter",
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "datasetName": {
+              "type": "string",
+              "description": "The name for the dataset which corresponds to its name in the underlying service"
+            },
+            "schema": {
+              "type": "object",
+              "description": "The schema for all data items in the dataset"
+            }
+          },
+          "required": [
+            "datasetName"
+          ]
+        },
+        "source": "./services/dataset.rsm.json"
+      },
+      "File Service": {
+        "name": "File Service",
+        "description": "GET files from urls and PUT files to urls",
+        "moduleUrl": "./services/file.ts",
+        "apis": [
+          "store",
+          "file.base"
+        ],
+        "adapterInterface": "IFileAdapter",
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "extensions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "description": "Optional list of the file extensions allowed to be stored"
+            }
+          }
+        },
+        "source": "./services/file.rsm.json"
+      },
+      "Library functions": {
+        "name": "Library functions",
+        "description": "A range of simple utility web functions",
+        "moduleUrl": "./services/lib.ts",
+        "apis": [
+          "sys.lib"
+        ],
+        "source": "./services/lib.rsm.json"
+      },
+      "Pipeline": {
+        "name": "Pipeline",
+        "description": "A pipeline of urls acting as request processors in parallel or serial",
+        "moduleUrl": "./services/pipeline.ts",
+        "apis": [
+          "transform",
+          "pipeline"
+        ],
+        "configSchema": {
+          "$id": "http://restspace.io/services/pipeline",
+          "definitions": {
+            "pipeline": {
+              "type": "array",
+              "items": {
+                "type": [
+                  "string",
+                  "array"
+                ],
+                "oneOf": [
+                  {
+                    "title": "request",
+                    "type": "string"
+                  },
+                  {
+                    "title": "subpipeline",
+                    "$ref": "#/definitions/pipeline"
+                  }
+                ],
+                "editor": "oneOfRadio"
+              }
+            }
+          },
+          "type": "object",
+          "properties": {
+            "pipeline": {
+              "$ref": "#/definitions/pipeline"
+            },
+            "manualMimeTypes": {
+              "type": "object",
+              "properties": {
+                "requestMimeType": {
+                  "type": "string"
+                },
+                "requestSchema": {
+                  "type": "object"
+                },
+                "responseMimeType": {
+                  "type": "string"
+                },
+                "responseSchema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "source": "./services/pipeline.rsm.json"
+      },
+      "Pipeline store": {
+        "name": "Pipeline store",
+        "description": "Run a pipeline whose specification is stored at the request url",
+        "moduleUrl": "./services/pipeline-store.ts",
+        "apis": [
+          "store-transform"
+        ],
+        "isFilter": true,
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "store": {
+              "type": "object",
+              "description": "Configuration for the pipeline store",
+              "properties": {
+                "adapterSource": {
+                  "type": "string",
+                  "description": "Source url for adapter for pipeline store"
+                },
+                "infraName": {
+                  "type": "string",
+                  "description": "Infra name for pipeline store"
+                },
+                "adapterConfig": {
+                  "type": "object",
+                  "properties": {}
+                }
+              }
+            }
+          },
+          "required": [
+            "store"
+          ]
+        },
+        "postPipeline": [
+          "if (isManage && method !== 'POST') $METHOD store/$P*"
+        ],
+        "privateServices": {
+          "store": {
+            "name": "'Pipeline Store'",
+            "source": "./services/file.rsm.json",
+            "access": {
+              "readRoles": "access.readRoles",
+              "writeRoles": "access.writeRoles"
+            },
+            "adapterInterface": "IFileAdapter",
+            "adapterSource": "store.adapterSource",
+            "infraName": "store.infraName",
+            "adapterConfig": "store.adapterConfig",
+            "extensions": "[ 'json' ]"
+          }
+        },
+        "source": "./services/pipeline-store.rsm.json"
+      },
+      "Static site filter": {
+        "name": "Static site filter",
+        "description": "Provide static site behaviour with options suitable for hosting SPAs",
+        "moduleUrl": "./services/static-site-filter.ts",
+        "apis": [],
+        "isFilter": true,
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "divertMissingToDefault": {
+              "type": "boolean",
+              "description": "Divert a 404 Not Found to the default file, needed for JS routing"
+            },
+            "defaultResource": {
+              "type": "string",
+              "description": "Name of the resource served to /base-path/"
+            }
+          }
+        },
+        "source": "./services/static-site-filter.rsm.json"
+      },
+      "Static site service": {
+        "name": "Static site service",
+        "description": "Hosts a static site with options suitable for SPA routing",
+        "moduleUrl": "./services/file.ts",
+        "apis": [
+          "store",
+          "file.base"
+        ],
+        "adapterInterface": "IFileAdapter",
+        "prePipeline": [
+          "$METHOD staticSiteFilter/$*?targetPath=$*&outerUrl=$$"
+        ],
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "divertMissingToDefault": {
+              "type": "boolean",
+              "description": "Divert a 404 Not Found to the default file, needed for JS routing"
+            },
+            "defaultResource": {
+              "type": "string",
+              "description": "Name of the resource served to /base-path/"
+            }
+          }
+        },
+        "privateServices": {
+          "staticSiteFilter": {
+            "name": "'Static site filter'",
+            "access": {
+              "readRoles": "'all'",
+              "writeRoles": "'all'"
+            },
+            "source": "./services/static-site-filter.rsm.json",
+            "infraName": "infraName",
+            "adapterConfig": "adapterConfig",
+            "adapterSource": "adapterSource",
+            "divertMissingToDefault": "divertMissingToDefault",
+            "defaultResource": "defaultResource"
+          }
+        },
+        "source": "./services/static-site.rsm.json"
+      },
+      "User data service": {
+        "name": "User data service",
+        "description": "Manages access to and stores user data",
+        "moduleUrl": "./services/dataset.ts",
+        "apis": [
+          "store",
+          "data.set"
+        ],
+        "adapterInterface": "IDataAdapter",
+        "prePipeline": [
+          "$METHOD userFilter/$P*"
+        ],
+        "postPipeline": [
+          "$METHOD userFilter/$P*"
+        ],
+        "privateServices": {
+          "userFilter": {
+            "name": "'User filter'",
+            "access": {
+              "readRoles": "'all'",
+              "writeRoles": "'all'"
+            },
+            "source": "./services/user-filter.rsm.json"
+          }
+        },
+        "source": "./services/user-data.rsm.json"
+      },
+      "User filter": {
+        "name": "User filter",
+        "description": "Manage passwords and restrict illegal operations to users",
+        "moduleUrl": "./services/user-filter.ts",
+        "apis": [],
+        "isFilter": true,
+        "source": "./services/user-filter.rsm.json"
+      },
+      "Template": {
+        "name": "Template",
+        "description": "Fill a template with data from the request",
+        "moduleUrl": "./services/template.ts",
+        "apis": [
+          "store-transform"
+        ],
+        "adapterInterface": "ITemplateAdapter",
+        "isFilter": true,
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "outputMime": {
+              "type": "string"
+            },
+            "store": {
+              "type": "object",
+              "description": "Configuration for the template store",
+              "properties": {
+                "adapterSource": {
+                  "type": "string",
+                  "description": "Source url for adapter for template store"
+                },
+                "infraName": {
+                  "type": "string",
+                  "description": "Infra name for template store"
+                },
+                "adapterConfig": {
+                  "type": "object",
+                  "properties": {}
+                },
+                "extension": {
+                  "type": "string",
+                  "description": "Extension for template files"
+                }
+              }
+            }
+          },
+          "required": [
+            "outputMime",
+            "store"
+          ]
+        },
+        "postPipeline": [
+          "if (method !== 'POST') $METHOD store/$P*"
+        ],
+        "privateServices": {
+          "store": {
+            "name": "'Template Store'",
+            "source": "./services/file.rsm.json",
+            "access": {
+              "readRoles": "access.readRoles",
+              "writeRoles": "access.writeRoles"
+            },
+            "adapterInterface": "IFileAdapter",
+            "adapterSource": "store.adapterSource",
+            "infraName": "store.infraName",
+            "adapterConfig": "store.adapterConfig",
+            "extensions": "[ store.extension ]"
+          }
+        },
+        "source": "./services/template.rsm.json"
+      },
+      "Proxy Service": {
+        "name": "Proxy Service",
+        "description": "Forwards requests with server defined authentication or urls",
+        "moduleUrl": "./services/proxy.ts",
+        "apis": [
+          "proxy"
+        ],
+        "adapterInterface": "IProxyAdapter",
+        "source": "./services/proxy.rsm.json"
+      },
+      "Email Service": {
+        "name": "Email Service",
+        "description": "Send an email optionally with attachments",
+        "moduleUrl": "./services/email.ts",
+        "apis": [
+          "email"
+        ],
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "host": {
+              "type": "string"
+            },
+            "port": {
+              "type": "number"
+            },
+            "secure": {
+              "type": "boolean"
+            },
+            "user": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "defaultFrom": {
+              "type": "string",
+              "description": "From address is not specified"
+            }
+          },
+          "required": [
+            "host",
+            "port",
+            "secure",
+            "user",
+            "password",
+            "defaultFrom"
+          ]
+        },
+        "source": "./services/email.rsm.json"
+      },
+      "Account Service": {
+        "name": "Account Service",
+        "description": "Provides password reset and email verification",
+        "moduleUrl": "./services/account.ts",
+        "apis": [
+          "account"
+        ],
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "userUrlPattern": {
+              "type": "string",
+              "description": "Url pattern to fetch user data from"
+            },
+            "emailSendUrlPattern": {
+              "type": "string",
+              "description": "Url pattern to POST to for sending an email"
+            },
+            "passwordReset": {
+              "type": "object",
+              "description": "Config for a function allowing a user to reset their password via emailed tokenised url",
+              "properties": {
+                "tokenExpiryMins": {
+                  "type": "number"
+                },
+                "returnPageUrl": {
+                  "type": "string",
+                  "description": "url for page containing a form which posts to the service's token-update-password path"
+                },
+                "emailTemplateUrl": {
+                  "type": "string",
+                  "description": "url for template to create email sent to user when the service's reset-password path is called"
+                }
+              },
+              "required": [
+                "returnPageUrl",
+                "emailTemplateUrl"
+              ]
+            },
+            "emailConfirm": {
+              "type": "object",
+              "description": "Config for a function allowing a user to validate their email via emailed tokenised url",
+              "properties": {
+                "tokenExpiryMins": {
+                  "type": "number"
+                },
+                "returnPageUrl": {
+                  "type": "string",
+                  "description": "url for page containing a form which posts to the service's confirm-email path"
+                },
+                "emailTemplateUrl": {
+                  "type": "string",
+                  "description": "url for template to create email sent to user when the service's verify-email path is called"
+                }
+              },
+              "required": [
+                "returnPageUrl",
+                "emailTemplateUrl"
+              ]
+            }
+          },
+          "required": [
+            "userUrlPattern",
+            "emailSendUrlPattern"
+          ]
+        },
+        "source": "./services/account.rsm.json"
+      },
+      "Discord Service": {
+        "name": "Discord Service",
+        "description": "Manages command creation for Discord",
+        "moduleUrl": "./services/discord.ts",
+        "apis": [
+          "store"
+        ],
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "proxyAdapterConfig": {
+              "type": "object",
+              "properties": {
+                "applicationId": {
+                  "type": "string"
+                },
+                "botToken": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "applicationId",
+                "botToken"
+              ]
+            },
+            "publicKey": {
+              "type": "string"
+            },
+            "guildIds": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "triggerUrl": {
+              "type": "string",
+              "description": "Url pattern called when Discord calls the service with an interaction"
+            }
+          },
+          "required": [
+            "publicKey",
+            "proxyAdapterConfig"
+          ]
+        },
+        "proxyAdapterSource": "./adapter/DiscordProxyAdapter.ts",
+        "source": "./services/discord.rsm.json"
+      }
+    },
+    "adapters": {
+      "Local File Adapter": {
+        "name": "Local File Adapter",
+        "description": "Reads and writes files on the file system local to the runtime",
+        "moduleUrl": "./adapter/LocalFileAdapter.ts",
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "rootPath": {
+              "type": "string",
+              "description": "File path to root of all file storage"
+            },
+            "basePath": {
+              "type": "string",
+              "description": "Path below root path to storage for this service (generally unique)"
+            }
+          }
+        },
+        "adapterInterfaces": [
+          "IFileAdapter",
+          "IDataAdapter"
+        ],
+        "source": "./adapter/LocalFileAdapter.ram.json"
+      },
+      "S3 File Adapter": {
+        "name": "S3 File Adapter",
+        "description": "Reads and writes files on the AWS S3",
+        "moduleUrl": "./adapter/S3FileAdapter.ts",
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "rootPath": {
+              "type": "string"
+            },
+            "bucketName": {
+              "type": "string"
+            },
+            "region": {
+              "type": "string"
+            },
+            "tenantDirectories": {
+              "type": "boolean"
+            },
+            "secretAccessKey": {
+              "type": "string"
+            },
+            "accessKeyId": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rootPath",
+            "bucketName",
+            "region"
+          ]
+        },
+        "adapterInterfaces": [
+          "IFileAdapter",
+          "IDataAdapter"
+        ],
+        "source": "./adapter/S3FileAdapter.ram.json"
+      },
+      "Nunjucks Template Adapter": {
+        "name": "Nunjucks Template Adapter",
+        "description": "Supplies Nunjucks template processing",
+        "moduleUrl": "./adapter/NunjucksTemplateAdapter.ts",
+        "adapterInterfaces": [
+          "ITemplateAdapter"
+        ],
+        "source": "./adapter/NunjucksTemplateAdapter.ram.json"
+      },
+      "Simple Proxy Adapter": {
+        "name": "Simple Proxy Adapter",
+        "description": "Forwards a request to a configured path pattern without adding headers",
+        "moduleUrl": "./adapter/SimpleProxyAdapter.ts",
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "urlPattern": {
+              "type": "string",
+              "description": "Url pattern where to send request"
+            }
+          },
+          "required": [
+            "urlPattern"
+          ]
+        },
+        "adapterInterfaces": [
+          "IProxyAdapter"
+        ],
+        "source": "./adapter/SimpleProxyAdapter.ram.json"
+      },
+      "AWS 4 Proxy Adapter": {
+        "name": "AWS 4 Proxy Adapter",
+        "description": "Forwards a request to a configured path pattern after signing using AWS-4 signature",
+        "moduleUrl": "./adapter/AWS4ProxyAdapter.ts",
+        "configSchema": {
+          "type": "object",
+          "properties": {
+            "service": {
+              "type": "string",
+              "description": "AWS service e.g. s3"
+            },
+            "region": {
+              "type": "string",
+              "description": "AWS region e.g. eu-west-1"
+            },
+            "secretAccessKey": {
+              "type": "string",
+              "description": "AWS account keys, secret"
+            },
+            "accessKeyId": {
+              "type": "string",
+              "description": "AWS account keys, public access"
+            },
+            "urlPattern": {
+              "type": "string",
+              "description": "AWS endpoint url pattern"
+            }
+          },
+          "required": [
+            "urlPattern"
+          ]
+        },
+        "adapterInterfaces": [
+          "IProxyAdapter"
+        ],
+        "source": "./adapter/AWS4ProxyAdapter.ram.json"
+      }
+    },
+    "infra": {
+      "localStore": {
+        "adapterSource": "./adapter/LocalFileAdapter.ram.json",
+        "preconfigured": [
+          "rootPath"
+        ]
+      },
+      "s3Store": {
+        "preconfigured": [
+          "bucketName",
+          "region",
+          "tenantDirectories"
+        ]
+      },
+      "pdfGeneratorProxy": {
+        "adapterSource": "./adapter/SimpleProxyAdapter.ram.json",
+        "preconfigured": [
+          "urlPattern"
+        ]
+      }
+    }
+  }
+}

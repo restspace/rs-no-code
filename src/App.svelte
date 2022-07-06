@@ -3,14 +3,17 @@
 	import Drawflow from "drawflow";
 	import SideForm from "./components/SideForm.svelte";
 	import Catalogue from './components/Catalogue.svelte';
-	import catalogueJson from "./catalogue.json";
+	import catalogueJson from "./test-data/catalogue.json";
+	import servicesJson from "./test-data/services.json";
 	import { dragDrop, showForm, nodeData, currentNodeId, showApis, suspendedAddNodeToDrawFlow } from "./stores";
 	import ComponentList from './components/ComponentList.svelte';
-	import type { ApiSpec, CatalogueItem, ConfiguredComponent } from './CatalogueItem';
+	import type { ConnectSpec, ConfiguredComponent } from './CatalogueItem';
 	import ApiList from './components/ApiList.svelte';
+	import type { CatalogueResponse, IServiceSpec, ServiceManifestLocal } from './data/types';
+	import { initStateFromApi } from './data/stateTranslation';
 
 	let editor: Drawflow;
-	let creatingCatalogueItem: CatalogueItem | null = null;
+	let creatingCatalogueItem: ServiceManifestLocal | null = null;
 
 	function nodeSelected(id) {
 	}
@@ -94,23 +97,23 @@
 		} else {
 			ev.preventDefault();
 			const dataJson = ev.dataTransfer.getData("node");
-			const data = JSON.parse(dataJson) as ConfiguredComponent;
+			const data = JSON.parse(dataJson) as ServiceManifestLocal;
 			createNode(data, ev.clientX, ev.clientY);
 			console.log('not touchend');
 		}
     }
 
-	function createNode(data: ConfiguredComponent, x: number, y: number) {
+	function createNode(data: ServiceManifestLocal, x: number, y: number) {
 		creatingCatalogueItem = data;
 		if (data.apis.length < 2) {
-			addNodeToDrawFlow(data, x, y, data.apis?.[0]);
+			addNodeToDrawFlow(data, x, y, data.connects?.[0]);
 		} else {
-			$suspendedAddNodeToDrawFlow = (apiSpec: ApiSpec) => addNodeToDrawFlow(data, x, y, apiSpec);
+			$suspendedAddNodeToDrawFlow = (apiSpec: ConnectSpec) => addNodeToDrawFlow(data, x, y, apiSpec);
 			$showApis = true;
 		}
 	}
 
-    function addNodeToDrawFlow(itemSelect: ConfiguredComponent, pos_x, pos_y, apiSpec: ApiSpec) {
+    function addNodeToDrawFlow(itemSelect: ServiceManifestLocal, pos_x, pos_y, apiSpec: ConnectSpec) {
 		if (editor.editor_mode === 'fixed') {
 			return false;
 		}
@@ -157,7 +160,11 @@
 	}
 
 	let serviceModal = false;
-	const catalogue = catalogueJson as CatalogueItem[];
+
+	const catalogue = initStateFromApi(
+		servicesJson as unknown as Record<string, IServiceSpec>,
+		catalogueJson as unknown as CatalogueResponse
+	);
 </script>
 
 <main>

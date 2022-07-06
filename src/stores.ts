@@ -1,20 +1,21 @@
 import { Writable, writable } from "svelte/store";
-import type { ApiSpec, ConfiguredComponent } from "./CatalogueItem";
+import type { ConnectSpec, ConfiguredComponent } from "./CatalogueItem";
+import type { ServiceManifestLocal } from "./data/types";
 import type { NodeSpec } from "./NodeSpec";
 
 export interface DragDrop {
-	itemSelect: ConfiguredComponent | null;
+	itemSelect: ServiceManifestLocal | null;
 	lastMove: any;
 }
 
 // components on the ComponentList
-export const components: Writable<ConfiguredComponent[]> = writable([]);
+export const components: Writable<ServiceManifestLocal[]> = writable([]);
 // index of configuring component
 export const configIdx: Writable<number> = writable(-1);
 
 // info in the component being dragged/dropped
 export const dragDrop: Writable<DragDrop> = writable({
-	itemSelect: null as ConfiguredComponent | null,
+	itemSelect: null as ServiceManifestLocal | null,
 	lastMove: null
 });
 
@@ -30,4 +31,4 @@ export const nodeData: Writable<Record<number, NodeSpec>> = writable({});
 export const currentNodeId: number = 0;
 
 // Holds action to be taken on chosen ApiSpec while showing user dialog for ApiSpec selection
-export const suspendedAddNodeToDrawFlow: Writable<(apiSpec: ApiSpec) => void | null> = writable(null);
+export const suspendedAddNodeToDrawFlow: Writable<(apiSpec: ConnectSpec) => void | null> = writable(null);

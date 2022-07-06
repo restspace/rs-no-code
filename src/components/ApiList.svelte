@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { showApis, suspendedAddNodeToDrawFlow } from "../stores";
-	import type { ApiSpec, CatalogueItem, ComponentMode } from "../CatalogueItem";
+	import type { ConnectSpec, CatalogueItem, ComponentMode } from "../CatalogueItem";
+	import type { ServiceManifestLocal } from "../data/types";
 
-	export let creatingCatalogueItem: CatalogueItem | null;
+	export let creatingCatalogueItem: ServiceManifestLocal | null;
 
-	const chooseApi = (api: ApiSpec) => () => {
+	const chooseApi = (api: ConnectSpec) => () => {
 		console.log('click api, can add: ' + !!$suspendedAddNodeToDrawFlow);
 		if ($suspendedAddNodeToDrawFlow) {
 			$suspendedAddNodeToDrawFlow(api);
@@ -12,8 +13,8 @@
 		$showApis = false;
 	};
 
-	let apis: ApiSpec[];
-	$: apis = creatingCatalogueItem?.apis || [];
+	let apis: ConnectSpec[];
+	$: apis = creatingCatalogueItem?.connects || [];
 
 	const apiMode = (mode: ComponentMode) => {
 		switch (mode) {
